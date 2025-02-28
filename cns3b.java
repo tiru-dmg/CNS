@@ -2,28 +2,28 @@ import java.util.Scanner;
 
 public class SubstitutionCipher {
     public static void main(String[] args) {
-        // Define the substitution mappings
-        String a = "abcdefghijklmnopqrstuvwxyz";
-        String b = "zyxwvutsrqponmlkjihgfedcba";
-
-        // Take input from the user
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter any string: ");
         String input = sc.nextLine().toLowerCase();
-
-        // Encrypt the input string
-        StringBuilder encrypted = new StringBuilder();
-        for (char c : input.toCharArray()) {
-            if (Character.isLetter(c)) {
-                int index = a.indexOf(c);
-                encrypted.append(b.charAt(index));
-            } else {
-                encrypted.append(c); // Keep non-alphabet characters as is
-            }
-        }
-
-        // Print the result
-        System.out.println("The encrypted data is: " + encrypted);
+        
+        String a = "abcdefghijklmnopqrstuvwxyz";
+        String b = "zyxwvutsrqponmlkjihgfedcba";
+        
+        String encrypted = transform(input, a, b);
+        String decrypted = transform(encrypted, b, a);
+        
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypted);
+        
         sc.close();
+    }
+
+    public static String transform(String text, String from, String to) {
+        StringBuilder result = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            int index = from.indexOf(c);
+            result.append(index != -1 ? to.charAt(index) : c);
+        }
+        return result.toString();
     }
 }
