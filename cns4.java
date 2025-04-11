@@ -1,46 +1,28 @@
+/*Write a Java program to implement the DES algorithm logic.*/
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Scanner;
 
-public class SimpleDES {
-    private static SecretKey secretKey;
-    private static Cipher cipher;
-
+public class Main {
     public static void main(String[] args) throws Exception {
-        // Initialize the cipher and key
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
-        keyGenerator.init(56); // Key size for DES
-        secretKey = keyGenerator.generateKey();
-        cipher = Cipher.getInstance("DES");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("enter the string to encrypt:\n");
+        String input = sc.nextLine();
 
-        Scanner scanner = new Scanner(System.in);
+        KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+        SecretKey key = keyGen.generateKey();
 
-        // Get input from the user
-        System.out.print("Enter the string to encrypt: ");
-        String input = scanner.nextLine();
+        Cipher encCipher = Cipher.getInstance("DES");
+        encCipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encrypted = encCipher.doFinal(input.getBytes());
+        String encryptedValue = Base64.getEncoder().encodeToString(encrypted);
+        System.out.println("encrypted value: " + encryptedValue);
 
-        // Encrypt and decrypt the input string
-        String encrypted = encrypt(input);
-        String decrypted = decrypt(encrypted);
-
-        // Print the results
-        System.out.println("Encrypted Value: " + encrypted);
-        System.out.println("Decrypted Value: " + decrypted);
-
-        scanner.close();
-    }
-
-    public static String encrypt(String plainText) throws Exception {
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedBytes);
-    }
-
-    public static String decrypt(String encryptedText) throws Exception {
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
-        return new String(decryptedBytes);
+        Cipher decCipher = Cipher.getInstance("DES");
+        decCipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] decrypted = decCipher.doFinal(Base64.getDecoder().decode(encryptedValue));
+        System.out.println("decrypted value: " + new String(decrypted));
     }
 }
