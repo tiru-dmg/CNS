@@ -1,36 +1,26 @@
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.swing.JOptionPane;
+/*Using Java Cryptography, encrypt the text “Hello world” using BlowFish.
+Create your own key using Java keytool.*/
 
-public class BlowFishCipher {
-    public static void main(String[] args) {
-        try {
-            // Create a key generator for Blowfish
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("Blowfish");
-            SecretKey secretKey = keyGenerator.generateKey();
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
-            // Create a cipher instance for Blowfish
-            Cipher cipher = Cipher.getInstance("Blowfish");
+public class Main {
+    public static void main(String[] args) throws Exception {
+        String text = "Hello world";
+        String keyStr = "sneha"; // 8-56 bytes for Blowfish
+        SecretKey key = new SecretKeySpec(keyStr.getBytes(), "Blowfish");
 
-            // Get user input for the message to encrypt
-            String inputText = JOptionPane.showInputDialog("Input your message:");
+        Cipher cipher = Cipher.getInstance("Blowfish");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encrypted = cipher.doFinal(text.getBytes());
+        String encryptedText = Base64.getEncoder().encodeToString(encrypted);
 
-            // Encrypt the message
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] encrypted = cipher.doFinal(inputText.getBytes());
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        String decryptedText = new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
 
-            // Decrypt the message
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            byte[] decrypted = cipher.doFinal(encrypted);
-
-            // Show encrypted and decrypted text
-            JOptionPane.showMessageDialog(null,
-                    "Encrypted text: " + new String(encrypted) + "\n" +
-                    "Decrypted text: " + new String(decrypted));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("original text: " + text);
+        System.out.println("encrypted text: " + encryptedText);
+        System.out.println("decrypted text: " + decryptedText);
     }
 }
