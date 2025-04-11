@@ -1,0 +1,61 @@
+<!--Implement the Diffie-Hellman Key Exchange mechanism using HTML and
+JavaScript. Consider the end user as one of the parties (Alice) and the
+JavaScript application as other party (bob)-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Diffie-Hellman Demo</title>
+</head>
+<body>
+
+  <h2>Diffie-Hellman Key Exchange Demonstration</h2>
+  <p>Alice (you) and Bob (Application) will establish a shared secret key.</p>
+
+  <div class="input-group">
+    <label>Public Prime Number (P): <span id="pValue">23</span></label><br>
+    <label>Public Base (G): <span id="gValue">5</span></label><br>
+    <label>Enter Alice private key (1-26): <input type="number" id="alicePrivate" min="1" max="26" value="4"></label>
+  </div>
+
+  <button onclick="keyExchange()">Calculate Key Exchange</button>
+
+  <div id="output"></div>
+
+  <script>
+    const modPow = (b, e, m) => {
+      let r = 1; b %= m;
+      while (e) { if (e & 1) r = r * b % m; b = b * b % m; e >>= 1; }
+      return r;
+    };
+
+    function keyExchange() {
+      const p = +document.getElementById("pValue").textContent,
+            g = +document.getElementById("gValue").textContent,
+            a = +document.getElementById("alicePrivate").value;
+
+      if (a < 1 || a > 26) return alert("Enter valid Alice key (1-26)");
+      
+      const A = modPow(g, a, p),
+            b = Math.floor(Math.random() * 26) + 1,
+            B = modPow(g, b, p),
+            sa = modPow(B, a, p),
+            sb = modPow(A, b, p);
+
+      document.getElementById("output").innerHTML = `
+        <p>Public Prime Number (P): ${p}</p>
+        <p>Public Base (G): ${g}</p>
+        <p>Alice's Private Key (a): ${a}</p>
+        <p>Alice's Public Key (A = G^a mod P): ${A}</p>
+        <p>Bob's Private Key (b): ${b}</p>
+        <p>Bob's Public Key (B = G^b mod P): ${B}</p>
+        <p>Alice's Calculated Shared Secret (B^a mod P): ${sa}</p>
+        <p>Bob's Calculated Shared Secret (A^b mod P): ${sb}</p>
+        <p style="color:${sa === sb ? 'green' : 'red'};">
+          ${sa === sb ? 'Shared Secret Key established successfully!' : 'Error: Shared Secret Keys do not match!'}
+        </p>`;
+    }
+  </script>
+
+</body>
+</html>
