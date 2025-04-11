@@ -1,29 +1,25 @@
+/* Write a Java program to perform encryption and decryption using the
+following algorithms:
+Substitution cipher*/
 import java.util.Scanner;
 
 public class SubstitutionCipher {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter any string: ");
-        String input = sc.nextLine().toLowerCase();
-        
-        String a = "abcdefghijklmnopqrstuvwxyz";
-        String b = "zyxwvutsrqponmlkjihgfedcba";
-        
-        String encrypted = transform(input, a, b);
-        String decrypted = transform(encrypted, b, a);
-        
-        System.out.println("Encrypted: " + encrypted);
-        System.out.println("Decrypted: " + decrypted);
-        
-        sc.close();
+    static String encrypt(String text, int key) {
+        return text.chars()
+            .map(c -> Character.isLetter(c) ? (Character.isUpperCase(c) ? 
+                (c - 'A' + key) % 26 + 'A' : (c - 'a' + key) % 26 + 'a') : c)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
-    public static String transform(String text, String from, String to) {
-        StringBuilder result = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            int index = from.indexOf(c);
-            result.append(index != -1 ? to.charAt(index) : c);
-        }
-        return result.toString();
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter string: ");
+        String input = sc.nextLine();
+        int key = 3;
+        String encrypted = encrypt(input, key);
+        String decrypted = encrypt(encrypted, 26 - key);
+        System.out.println("Encrypted string: " + encrypted);
+        System.out.println("Decrypted string: " + decrypted);
     }
 }
