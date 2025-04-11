@@ -1,39 +1,31 @@
-import java.util.Scanner;
+/* Write a Java program to perform encryption and decryption using the
+following algorithms:
+a) Ceaser Cipher*/
 
+
+import java.util.*;
 public class CaesarCipher {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        // Input the string and key
-        System.out.print("Enter any string: ");
-        String str = sc.nextLine();
-        System.out.print("Enter the key: ");
-        int key = sc.nextInt();
-
-        // Encrypt and display the result
-        String encrypted = encrypt(str, key);
-        System.out.println("Encrypted string: " + encrypted);
-
-        // Decrypt and display the result
-        String decrypted = decrypt(encrypted, key);
-        System.out.println("Decrypted string: " + decrypted);
-
-        sc.close();
+        System.out.println("enter string");
+        String text = sc.nextLine();
+        System.out.println("enter key");
+        int key = sc.nextInt() % 26;
+        String encrypted = cipher(text, key);
+        String decrypted = cipher(encrypted, 26 - key);
+        System.out.println("encrypted string\n" + encrypted);
+        System.out.println("decrypted string\n" + decrypted);
     }
-
-    public static String encrypt(String str, int key) {
-        StringBuilder encrypted = new StringBuilder();
-        for (char c : str.toCharArray()) {
-            if (Character.isLetter(c)) {
-                char base = Character.isUpperCase(c) ? 'A' : 'a';
-                c = (char) ((c - base + key) % 26 + base);
-            }
-            encrypted.append(c);
+    static String cipher(String text, int key) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            if (Character.isUpperCase(c))
+                sb.append((char) ('A' + (c - 'A' + key) % 26));
+            else if (Character.isLowerCase(c))
+                sb.append((char) ('a' + (c - 'a' + key) % 26));
+            else
+                sb.append(c);
         }
-        return encrypted.toString();
-    }
-
-    public static String decrypt(String str, int key) {
-        return encrypt(str, 26 - (key % 26)); // Decrypt by reversing the shift
+        return sb.toString();
     }
 }
