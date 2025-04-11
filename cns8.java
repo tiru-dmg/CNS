@@ -1,41 +1,25 @@
+/*Write a Java program to implement RSA Algoithm.*/
 import java.math.BigInteger;
-import java.util.Random;
 import java.util.Scanner;
+import java.security.SecureRandom;
 
-public class SimpleRSA {
-
-    static Scanner sc = new Scanner(System.in);
-
+public class Main{
     public static void main(String[] args) {
-        // Read prime numbers p and q from the user
-        System.out.print("Enter a prime number p: ");
-        BigInteger p = sc.nextBigInteger();
-
-        System.out.print("Enter another prime number q: ");
-        BigInteger q = sc.nextBigInteger();
-
-        // Calculate n and phi(n)
-        BigInteger n = p.multiply(q);
-        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
-
-        // Generate the public key (e, n)
-        BigInteger e = generateE(phi);
-
-        // Calculate the private key d
+        Scanner sc = new Scanner(System.in);
+        System.out.println("enter two prime numbers:");
+        BigInteger p = sc.nextBigInteger(), q = sc.nextBigInteger();
+        BigInteger n = p.multiply(q), phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        BigInteger e = BigInteger.probablePrime(8, new SecureRandom());
+        while (!phi.gcd(e).equals(BigInteger.ONE)) e = e.add(BigInteger.ONE);
         BigInteger d = e.modInverse(phi);
-
-        // Output the keys
-        System.out.println("Public key (e, n): (" + e + ", " + n + ")");
-        System.out.println("Private key (d, n): (" + d + ", " + n + ")");
-    }
-
-    // Method to generate e such that gcd(e, phi(n)) = 1
-    public static BigInteger generateE(BigInteger phi) {
-        Random rand = new Random();
-        BigInteger e;
-        do {
-            e = new BigInteger(phi.bitLength(), rand); // Random e of appropriate size
-        } while (e.compareTo(phi) >= 0 || e.gcd(phi).intValue() != 1); // Ensure gcd(e, phi) = 1
-        return e;
+        System.out.println("public key(e,n): " + e + "," + n);
+        System.out.println("private key(d,n): " + d + "," + n);
+        System.out.println("enter a number:");
+        BigInteger msg = sc.nextBigInteger();
+        BigInteger enc = msg.modPow(e, n);
+        BigInteger dec = enc.modPow(d, n);
+        System.out.println("original: " + msg);
+        System.out.println("encrypted: " + enc);
+        System.out.println("decrypted: " + dec);
     }
 }
